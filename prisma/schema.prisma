@@ -11,3 +11,102 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum userRole {
+  admin
+  member
+}
+
+enum statusTask {
+  pending
+  in_progress
+  completed
+}
+
+enum priorityTask {
+  high
+  medium
+  low
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String
+  password String
+
+  role userRole @default(member)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  users TeamMember[]
+  task Task[]
+  changed TaskHistory[]
+
+  @@map("users")
+}
+
+model Team {
+  id String @id @default(uuid())
+  name String
+  description String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  member TeamMember[]
+  task Task[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  teamId String @map("team_id")
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("team_members")
+}
+
+model Task {
+  id String @id @default(uuid())
+  title String
+  description String
+
+  status statusTask @default(pending)
+  priority priorityTask
+
+  assignedTo String @map("assigned_to")
+  teamId String
+
+  user User @relation(fields: [assignedTo], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  history TaskHistory[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("tasks")
+}
+
+model TaskHistory {
+  id String @id @default(uuid())
+
+  taskId String @map("task_id")
+  changedBy String @map("changed_by")
+  
+  oldStatus String @map("old_status")
+  newStatus String @map("new_status")
+
+  task Task @relation(fields: [taskId], references: [id])
+  userChanged User @relation(fields: [changedBy], references: [id])
+
+  changedAt DateTime @default(now()) @map("changed_at")
+}
