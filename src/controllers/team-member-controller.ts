@@ -20,4 +20,18 @@ export class TeamMemberController{
 
     return res.status(201).json(member)
   }
+
+  async remove(req: Request, res: Response){
+    const paramsSchema = z.object({
+      team_link: z.uuid()
+    })
+
+    const { team_link } = paramsSchema.parse(req.params)
+
+    await prisma.teamMember.delete({
+      where: { id: team_link }
+    })
+
+    return res.status(204).send()
+  }
 }

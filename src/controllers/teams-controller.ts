@@ -26,7 +26,17 @@ export class TeamsController{
 
   async index(req: Request, res: Response){
     const teams = await prisma.team.findMany({
-      select: { name: true, description: true }
+      include: {
+        member: {
+          include: {
+            user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
     })
 
     return res.json(teams)

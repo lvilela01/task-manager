@@ -9,5 +9,6 @@ const teamMemberController = new TeamMemberController()
 
 teamMemberRoutes.use(ensureAuthenticated, verifyUserAuthorization(['admin']))
 teamMemberRoutes.post('/', teamMemberController.create)
+teamMemberRoutes.delete('/:team_link', teamMemberController.remove)
 
 export { teamMemberRoutes }
