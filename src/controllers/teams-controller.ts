@@ -42,5 +42,27 @@ export class TeamsController{
     return res.json(teams)
   }
 
-  
+  async update(req: Request, res: Response){
+    const paramsSchema = z.object({
+      team_id: z.uuid()
+    })
+
+    const bodySchema = z.object({
+      status_team: z.enum(['active', 'disabled'])
+    })
+
+    const { team_id } = paramsSchema.parse(req.params)
+    const { status_team } = bodySchema.parse(req.body)
+
+    await prisma.team.update({
+      data: {
+        status: status_team
+      },
+      where: {
+        id: team_id
+      }
+    })
+
+    return res.json(200).json({message: 'Team updated successfully'})
+  }
 }

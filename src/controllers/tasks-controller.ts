@@ -26,4 +26,36 @@ export class TasksController{
 
     return res.json(task)
   }
+
+  async index(req: Request, res: Response){
+    const task = await prisma.task.findMany({
+      select: {
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        responsible: {
+          select: {
+            name: true
+          }
+        },
+        team: {
+          select: {
+            name: true, description: true,
+            members: {
+              select: {
+                user: {
+                  select: {
+                    name: true
+                  }
+                }
+              }
+            }
+          },
+        },
+      }
+    })
+
+    return res.json(task)
+  }
 }

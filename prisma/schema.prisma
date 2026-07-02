@@ -29,6 +29,11 @@ enum priorityTask {
   low
 }
 
+enum statusTeam {
+  active
+  disabled
+}
+
 model User {
   id String @id @default(uuid())
   name String
@@ -51,11 +56,12 @@ model Team {
   id String @id @default(uuid())
   name String
   description String
+  status statusTeam @default(active)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  member TeamMember[]
+  members TeamMember[]
   task Task[]
 
   @@map("teams")
@@ -85,7 +91,7 @@ model Task {
   assignedTo String @map("assigned_to")
   teamId String
 
-  user User @relation(fields: [assignedTo], references: [id])
+  responsible User @relation(fields: [assignedTo], references: [id])
   team Team @relation(fields: [teamId], references: [id])
 
   history TaskHistory[]
