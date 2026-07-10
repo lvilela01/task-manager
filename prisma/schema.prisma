@@ -108,8 +108,11 @@ model TaskHistory {
   taskId String @map("task_id")
   changedBy String @map("changed_by")
 
-  oldStatus statusTask @map("old_status")
-  newStatus statusTask @map("new_status")
+  oldStatus statusTask? @map("old_status")
+  newStatus statusTask? @map("new_status")
+
+  oldPriority priorityTask? @map("old_priority")
+  newPriority priorityTask? @map("new_priority")
 
   task Task @relation(fields: [taskId], references: [id])
   userChanged User @relation(fields: [changedBy], references: [id])

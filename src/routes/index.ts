@@ -5,6 +5,7 @@ import { teamsRoutes } from "./teams-routes";
 import { tasksRoutes } from "./tasks-routes";
 import { teamMemberRoutes } from "./team-member-routes";
 import { taskHistoryRoutes } from "./task-history.routes";
+import { assigneeTasksRoutes } from "./assignee-tasks-routes";
 
 const routes = Router()
 
@@ -14,5 +15,6 @@ routes.use('/teams', teamsRoutes)
 routes.use('/tasks', tasksRoutes)
 routes.use('/members', teamMemberRoutes)
 routes.use('/logs', taskHistoryRoutes)
+routes.use('/my-tasks', assigneeTasksRoutes)
 
 export { routes }
