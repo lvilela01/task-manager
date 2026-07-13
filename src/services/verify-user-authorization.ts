@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "./AppError";
+import { AppError } from "./AppError.js";
 
 export function verifyUserAuthorization(role: string[]){
   return (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from 'zod'
-import { prisma } from '@/database/prisma'
+import { prisma } from '@/database/prisma.js'
 
 export class TeamsController{
   async create(req: Request, res: Response){

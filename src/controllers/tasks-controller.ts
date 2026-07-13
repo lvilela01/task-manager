@@ -1,19 +1,19 @@
-import { Request, Response } from "express";
-import { z } from 'zod'
-import { prisma } from "@/database/prisma";
-import { AppError } from "@/services/AppError";
+import { Request, Response } from 'express';
+import { z } from 'zod';
+import { prisma } from '@/database/prisma.js';
+import { AppError } from '@/services/AppError.js';
 
-export class TasksController{
-  async create(req: Request, res: Response){
+export class TasksController {
+  async create(req: Request, res: Response) {
     const bodySchema = z.object({
       title: z.string(),
       description: z.string(),
       priority: z.enum(['low', 'high', 'medium']),
       assigned_to: z.uuid(),
       team_id: z.uuid()
-    })
+    });
 
-    const { title, description, priority, assigned_to, team_id } = bodySchema.parse(req.body)
+    const { title, description, priority, assigned_to, team_id } = bodySchema.parse(req.body);
 
     const task = await prisma.task.create({
       data: {
@@ -23,12 +23,12 @@ export class TasksController{
         assignedTo: assigned_to,
         teamId: team_id
       }
-    })
+    });
 
-    return res.json(task)
+    return res.json(task);
   }
 
-  async index(req: Request, res: Response){
+  async index(req: Request, res: Response) {
     const task = await prisma.task.findMany({
       select: {
         title: true,
@@ -42,7 +42,8 @@ export class TasksController{
         },
         team: {
           select: {
-            name: true, description: true,
+            name: true,
+            description: true,
             members: {
               select: {
                 user: {
@@ -52,56 +53,56 @@ export class TasksController{
                 }
               }
             }
-          },
-        },
+          }
+        }
       }
-    })
+    });
 
-    return res.json(task)
+    return res.json(task);
   }
 
-  async update(req: Request, res: Response){
+  async update(req: Request, res: Response) {
     const paramsSchema = z.object({
       id: z.uuid()
-    })
+    });
 
     const bodySchema = z.object({
       priority_task: z.enum(['low', 'medium', 'high']).optional(),
       team_id: z.uuid().optional(),
       assigned_to: z.uuid().optional()
-    })
+    });
 
-    const { id } = paramsSchema.parse(req.params)
-    const { priority_task, team_id, assigned_to } = bodySchema.parse(req.body)
+    const { id } = paramsSchema.parse(req.params);
+    const { priority_task, team_id, assigned_to } = bodySchema.parse(req.body);
 
     const currentTask = await prisma.task.findUnique({
       where: { id }
-    })
+    });
 
-    if(!currentTask) {
-      throw new AppError('Task not found!')
+    if (!currentTask) {
+      throw new AppError('Task not found!');
     }
 
     const data: {
-      priority?: 'low' | 'medium' | 'high'
-      teamId?: string
-      assignedTo?: string
-    } = {}
+      priority?: 'low' | 'medium' | 'high';
+      teamId?: string;
+      assignedTo?: string;
+    } = {};
 
-    if(priority_task) data.priority = priority_task
-    if(team_id) data.teamId = team_id
-    if(assigned_to) data.assignedTo = assigned_to
+    if (priority_task) data.priority = priority_task;
+    if (team_id) data.teamId = team_id;
+    if (assigned_to) data.assignedTo = assigned_to;
 
     const updatedTask = await prisma.$transaction(async (tx) => {
       const task = await tx.task.update({
         where: { id },
         data
-      })
+      });
 
-      const changedBy = req.user?.id
+      const changedBy = req.user?.id;
 
-      if(!changedBy){
-        throw new AppError('User not found!')
+      if (!changedBy) {
+        throw new AppError('User not found!');
       }
 
       await tx.taskHistory.create({
@@ -113,45 +114,45 @@ export class TasksController{
           oldPriority: currentTask.priority,
           newPriority: priority_task || currentTask.priority
         }
-      })
+      });
 
-      return task
-    })
+      return task;
+    });
 
-    return res.json(updatedTask)
+    return res.json(updatedTask);
   }
 
-  async updateStatusByAssignee(req: Request, res: Response){
+  async updateStatusByAssignee(req: Request, res: Response) {
     const paramsSchema = z.object({
       id: z.uuid()
-    })
+    });
 
     const bodySchema = z.object({
       new_status: z.enum(['in_progress', 'completed'])
-    })
+    });
 
-    const { id } = paramsSchema.parse(req.params)
-    const { new_status } = bodySchema.parse(req.body)
+    const { id } = paramsSchema.parse(req.params);
+    const { new_status } = bodySchema.parse(req.body);
 
     const currentTask = await prisma.task.findUnique({
       where: { id }
-    })
+    });
 
-    if(!currentTask){
-      throw new AppError('Task not found!')
+    if (!currentTask) {
+      throw new AppError('Task not found!');
     }
 
-    const userId = req.user?.id
+    const userId = req.user?.id;
 
-    if(currentTask.assignedTo !== userId){
-      throw new AppError("You are not responsible for this task!", 403)
+    if (currentTask.assignedTo !== userId) {
+      throw new AppError('You are not responsible for this task!', 403);
     }
 
     const updatedTask = await prisma.$transaction(async (tx) => {
       const task = await tx.task.update({
         where: { id },
         data: { status: new_status }
-      })
+      });
 
       await tx.taskHistory.create({
         data: {
@@ -160,11 +161,38 @@ export class TasksController{
           oldStatus: currentTask.status,
           newStatus: new_status
         }
-      })
+      });
 
-      return task
+      return task;
+    });
+
+    return res.json(updatedTask);
+  }
+
+  async filter(req: Request, res: Response) {
+    const querySchema = z.object({
+      priority_task: z.enum(['low', 'medium', 'high']).optional(),
+      status_task: z.enum(['pending', 'in_progress', 'completed']).optional()
     })
 
-    return res.json(updatedTask)
+    const { status_task, priority_task } = querySchema.parse(req.query)
+
+    if(!priority_task && !status_task){
+      throw new AppError('Inform at last one filter: priority or status')
+    }
+
+    const dataTask: {
+      priority?: 'low' | 'medium' | 'high';
+      status?: 'pending' | 'in_progress' | 'completed';
+    } = {}
+
+    if(priority_task) dataTask.priority = priority_task
+    if(status_task) dataTask.status = status_task
+
+    const filterTask = await prisma.task.findMany({
+      where: dataTask
+    })
+
+    return res.json(filterTask)
   }
 }

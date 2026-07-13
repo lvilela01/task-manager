@@ -1,5 +1,5 @@
-import { prisma } from '@/database/prisma';
-import { AppError } from '@/services/AppError';
+import { prisma } from '@/database/prisma.js';
+import { AppError } from '@/services/AppError.js';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { hash } from 'bcrypt';
@@ -28,7 +28,7 @@ export class UsersController {
         email,
         password: hashedPassword
       },
-      select: { name: true, email: true }
+      select: { id: true, name: true, email: true }
     });
 
     return response.status(201).json({

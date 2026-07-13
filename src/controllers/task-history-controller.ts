@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { z } from 'zod'
-import { prisma } from "@/database/prisma";
-import { AppError } from "@/services/AppError";
+import { prisma } from "@/database/prisma.js";
+import { AppError } from "@/services/AppError.js";
 
 export class TaskHistoryController{
   async create(req: Request, res: Response){

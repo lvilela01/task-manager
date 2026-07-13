@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { AppError } from '@/services/AppError';
-import { prisma } from '@/database/prisma';
+import { AppError } from '@/services/AppError.js';
+import { prisma } from '@/database/prisma.js';
 import { compare } from 'bcrypt';
-import { authConfig } from '@/services/auth';
+import { authConfig } from '@/services/auth.js';
 import { sign } from 'jsonwebtoken';
 
 export class LoginController {

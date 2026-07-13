@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "esnext",
     "lib": ["ESNext"],
     "paths": {
