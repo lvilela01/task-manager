@@ -22,6 +22,7 @@ describe("UsersController", () => {
     })
 
     expect(response.status).toBe(201)
+    expect(response.body.user).toHaveProperty("id")
     expect(response.body).toEqual({
       message: 'User created successfully!',
       user: expect.objectContaining({
@@ -30,6 +31,6 @@ describe("UsersController", () => {
       })
     })
 
-    user_id = response.body.id || response.body.user?.id
+    user_id = response.body.user?.id
   })
 })
