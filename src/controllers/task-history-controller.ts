@@ -4,43 +4,7 @@ import { prisma } from "@/database/prisma.js";
 import { AppError } from "@/services/AppError.js";
 
 export class TaskHistoryController{
-  async create(req: Request, res: Response){
-    const bodySchema = z.object({
-      task_id: z.uuid(),
-      new_status: z.enum(['in_progress', 'completed'])
-    })
-
-    const { task_id, new_status } = bodySchema.parse(req.body)
-
-    const task = await prisma.task.findUnique({
-      where: { id: task_id }
-    })
-
-    if(!task){
-      throw new AppError('Task not found!')
-    }
-
-    const changed_by = req.user?.id
-
-    if(!changed_by){
-      throw new AppError('User not found!')
-    }
-
-    const old_status = task.status
-
-    const taskLog = await prisma.taskHistory.create({
-      data: {
-        taskId: task_id,
-        changedBy: changed_by,
-        oldStatus: old_status,
-        newStatus: new_status
-      }
-    })
-
-    return res.json(taskLog)
-  }
-
-  async show(req: Request, res: Response){
+    async show(req: Request, res: Response){
     const paramsSchema = z.object({
       task_id: z.uuid()
     })

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { usersRoutes } from "./users-routes";
-import { loginRoutes } from "./logins-routes";
-import { teamsRoutes } from "./teams-routes";
-import { tasksRoutes } from "./tasks-routes";
-import { teamMemberRoutes } from "./team-member-routes";
-import { taskHistoryRoutes } from "./task-history.routes";
-import { assigneeTasksRoutes } from "./assignee-tasks-routes";
+import { usersRoutes } from "./users-routes.js";
+import { loginRoutes } from "./logins-routes.js";
+import { teamsRoutes } from "./teams-routes.js";
+import { tasksRoutes } from "./tasks-routes.js";
+import { teamMemberRoutes } from "./team-member-routes.js";
+import { taskHistoryRoutes } from "./task-history.routes.js";
+import { assigneeTasksRoutes } from "./assignee-tasks-routes.js";
 
 const routes = Router()
 

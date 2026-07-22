@@ -4,7 +4,7 @@ import { AppError } from '@/services/AppError.js';
 import { prisma } from '@/database/prisma.js';
 import { compare } from 'bcrypt';
 import { authConfig } from '@/services/auth.js';
-import { sign } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export class LoginController {
   async create(req: Request, res: Response) {
@@ -29,7 +29,7 @@ export class LoginController {
 
     const { secret, expiresIn } = authConfig.jwt;
 
-    const token = sign({ role: user.role ?? 'member' }, secret, {
+    const token = jwt.sign({ role: user.role ?? 'member' }, secret, {
       subject: user.id,
       expiresIn
     });

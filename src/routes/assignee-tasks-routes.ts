@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { TasksController } from "@/controllers/tasks-controller";
-import { ensureAuthenticated } from "@/services/ensure-authenticated";
+import { TasksController } from "@/controllers/tasks-controller.js";
+import { ensureAuthenticated } from "@/services/ensure-authenticated.js";
 
 const assigneeTasksRoutes = Router()
 const assigneeTasksController = new TasksController()
