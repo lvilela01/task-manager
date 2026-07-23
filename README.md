@@ -61,5 +61,11 @@ Finally, click "Deploy Web Service."
 
 For each function—whether you need to edit, delete, create, or update—each controller specifies what information to include in the request body or in the URL. You can use Insomnia for testing in both the development and production environments.
 
+To run the tests, I recommend using the command `npm run test:dev + filename`, for example:
+  - `npm run test:dev -- login-controller.test.ts`
+When you specify the filename, the tests run separately, and this is the recommended way to use it.
 
+🚀 The API is published and available at the following address:
+
+🔗 [ https://task-manager-api-lumr.onrender.com ]
 
