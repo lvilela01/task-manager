@@ -1,6 +1,10 @@
 node_modules
-dist
 Dockerfile
 .git
 .dockerignore
 .gitignore
+build
+.env
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
