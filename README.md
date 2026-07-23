@@ -59,4 +59,7 @@ In Environment Variables, set the following variables:
     - PORT is typically set to 3000 in production.
 Finally, click "Deploy Web Service."
 
+For each function—whether you need to edit, delete, create, or update—each controller specifies what information to include in the request body or in the URL. You can use Insomnia for testing in both the development and production environments.
+
+
 
